@@ -1,0 +1,36 @@
+services:
+  jenkins:
+    image: apurwasingh/djentle
+    container_name: jenkins
+    networks:
+      jnet:
+        ipv4_address: 30.30.30.2
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+      - jenkins_home:/var/jenkins_home
+    restart: always
+
+  ansible:
+    image: apurwasingh/cansible
+    container_name: ansible
+    networks:
+      jnet:
+        ipv4_address: 30.30.30.4
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+      - ./deploy.yml:/root/deploy.yml
+    restart: always
+
+networks:
+  jnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 30.30.30.0/24
+
+volumes:
+  jenkins_home:
+
